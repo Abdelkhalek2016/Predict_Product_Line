@@ -1,0 +1,66 @@
+import fitz  # PyMuPDF
+import pandas as pd
+import requests
+
+
+# functions to return table in the page that contain 'keyword'
+def extract_table_from_page(pdf, keyword):
+      
+    if "http" in pdf:
+        response = requests.get(pdf)
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Open the PDF document
+            pdf_document = fitz.open("pdf", stream=response.content)
+        else:
+            print("Wrong PDF Link")    
+        
+    else:
+        pdf_document=fitz.open(pdf)
+
+    pg_numbers=[]    
+    for page_number, page in enumerate(pdf_document):
+        page_text = page.get_text()
+        if keyword in page_text:
+            pg_numbers.append(page_number)
+    all_df_tables=pd.DataFrame()
+    for  pg_no in pg_numbers:
+        #print(pg_no)       
+        page=pdf_document.load_page(pg_no)
+        all_tables=page.find_tables()
+        #print(all_tables)
+        if all_tables.tables != []:
+            df_table=all_tables[0].to_pandas()
+            all_df_tables=pd.concat([all_df_tables,df_table],axis=0)
+    return all_df_tables
+
+# function to return title of pdf
+def get_title(pdf):
+    
+    if "http" in pdf:
+        response = requests.get(pdf)
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Open the PDF document
+            pdf_document = fitz.open("pdf", stream=response.content)
+        else:
+            print("Wrong PDF Link")    
+        
+    else:
+        pdf_document=fitz.open(pdf)
+    
+    meta_data=pdf_document.metadata
+    title=meta_data.get('title')
+    subject=meta_data.get('subject')
+    return title.replace('\t','')
+
+df_table=extract_table_from_page("https://www.ti.com/lit/ds/symlink/tps709.pdf?HQS=TI-null-null-siliconexpert-df-ds-null-cn&ts=1695799449593","Addendum-Page")
+orderable_parts=pd.DataFrame(df_table.iloc[:,0])
+title = get_title("https://www.ti.com/lit/ds/symlink/tps709.pdf?HQS=TI-null-null-siliconexpert-df-ds-null-cn&ts=1695799449593")
+
+title = title.split('datasheet')[0].strip()
+
+
+orderable_parts['Descriptions']= title
+
+print(orderable_parts)
