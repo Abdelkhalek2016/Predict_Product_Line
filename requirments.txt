@@ -1,0 +1,9 @@
+joblib
+string
+sklearn
+ast
+pandas
+numpy
+fitz
+requests
+PyMuPDF
