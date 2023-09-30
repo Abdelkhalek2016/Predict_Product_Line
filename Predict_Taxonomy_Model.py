@@ -7,9 +7,7 @@ import pandas as pd
 import numpy as np
 import fitz  # PyMuPDF
 import requests
-import subprocess
 
-running=True
 
 specialcharcters=["0","1","2","3","4","5","6","7","8","9","s","S","$","@","•","º","°","%","Σ","Ω","μ","α","×","π","&","½","■","—","–","™","#","’","®","!","^","?","*","\"","€","±","~","“","”","µ","‘","ü","‑","⁰","","²","³",",","−","…","","（","）","≥"," ","≤","″","¬"," ","：","℃","Ć","―","Â","＠","］","［","˚","¼","Δ","©","□","�","・","é","ø","･","〞","～","„","、","‐","－","φ","£","ｍｍ","●","ô","【","】","※","à","·","§","å","ä","«","√","，","△","‟","´","λ","….","\"","","/","\\",":","s","-","(",")"]
 def claening_desc(desc):
@@ -158,25 +156,3 @@ try:
         st.dataframe(orderable_parts,use_container_width=True)
 except Exception as e:
     st.text("Be Noticed that we support till now supplier (Texas Instruments) with new PDFs only.\nUnexpected Error as (pdf link or path not right ), or can't understand document.\nPlease check your PDF Link again.\nAny way We will retrain module to get your expectation.")
-    
-    
-
-# The command you want to run
-cmd_command = "streamlit run Predict_Taxonomy_Model.py"
-
-# Run the command and capture the output
-
-if running:
-    
-    result = subprocess.run(cmd_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-
-    # Check the result
-    if result.returncode == 0:
-        print("Command executed successfully")
-        print("Output:")
-        print(result.stdout)
-    else:
-        print("Command failed")
-        print("Error:")
-        print(result.stderr)
-    running == False
